@@ -14,8 +14,14 @@
           <p>{{request.desiredtime}}</p>
           <h3 class="mb-4">Вознаграждение: </h3>
           <p>{{request.price}}</p>
-          <h3>Статус ображения:</h3>
-          <p>{{request.status}}</p>
+          <h3 class="mb-4">Статус ображения:</h3>
+          <v-select
+            :items="requestStatuses"
+            label="Статус"
+            :value="state"
+            outlined
+          ></v-select>
+
         </v-card>
       </v-flex>
       <v-flex md4>
@@ -29,13 +35,15 @@
 </template>
 
 <script>
-// import router from '@/router'
+import { statehelper } from '@/statehelper'
 import { HTTP } from '@/http-common';
 export default {
   props: ['id'],
   data () {
     return {
-      request: {}
+      request: {},
+      requestStatuses: ["Отправлено ⚠️","Запланировано 🕓", "Выполняется 🕓","Выполнено ✅","Отменено ❌"],
+      state: "Отправлено ⚠️"
     }
   },
   created: function () {
@@ -44,6 +52,11 @@ export default {
       this.request = response.data
       console.log(response.data)
     })
+  },
+  watch: {
+    request () {
+      this.state = statehelper(this.request.status)
+    }
   }
 }
 </script>

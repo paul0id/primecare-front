@@ -7,7 +7,14 @@
           <h3 class="mb-4">Время обращения:</h3>
           <p>{{request.timestamp}}</p>
           <h3 class="mb-4">Статус обращения:</h3>
-          <StateHelper :state='request.status'/>
+
+          <v-select
+            :items="requestStatuses"
+            label="Статус"
+            :value="state"
+            outlined
+          ></v-select>
+
         </v-card>
       </v-flex>
       <v-flex md4>
@@ -22,11 +29,14 @@
 
 <script>
 import { HTTP } from '@/http-common';
+import { statehelper } from '@/statehelper'
 export default {
   props: ['id'],
   data () {
     return {
-      request: {}
+      request: {},
+      requestStatuses: ["Отправлено ⚠️","Запланировано 🕓", "Выполняется 🕓","Выполнено ✅","Отменено ❌"],
+      state: "Отправлено ⚠️"
     }
   },
   created: function () {
@@ -36,12 +46,10 @@ export default {
       console.log(response.data)
     })
   },
-  // watch: {
-  //   requests () {
-  //     this.requests.forEach(request => {
-  //       request.state = statehelper(request.state)
-  //     })
-  //   }
-  // },
+  watch: {
+    request () {
+      this.state = statehelper(this.request.status)
+    }
+  },
 }
 </script>
